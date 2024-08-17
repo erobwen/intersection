@@ -12,6 +12,20 @@ describe("Test intersection", () => {
     expect(intersection[1]).toBe("c");
   });
 
+  test("One list empty", () => {
+    const listA: string[] = [];
+    const listB = ["b", "c", "d"];
+    const intersection = intersect(listA, listB);
+    expect(intersection.length).toBe(0);
+  });
+
+  test("Other list empty", () => {
+    const listA = ["b", "c", "d"];
+    const listB: string[] = [];
+    const intersection = intersect(listA, listB);
+    expect(intersection.length).toBe(0);
+  });
+
   test("Duplicates count", () => {
     const listA = ["a", "a"];
     const listB = ["a", "a", "a"];

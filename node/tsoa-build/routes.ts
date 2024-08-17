@@ -22,6 +22,15 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "IntersectionRequest": {
+        "dataType": "refObject",
+        "properties": {
+            "listA": {"dataType":"array","array":{"dataType":"string"},"required":true},
+            "listB": {"dataType":"array","array":{"dataType":"string"},"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 };
 const templateService = new ExpressTemplateService(models, {"noImplicitAdditionalProperties":"throw-on-extras","bodyCoercion":true});
 
@@ -39,12 +48,13 @@ export function RegisterRoutes(app: Router) {
 
 
     
-        app.get('/api/intersect',
+        app.post('/api/intersect',
             ...(fetchMiddlewares<RequestHandler>(Intersection)),
-            ...(fetchMiddlewares<RequestHandler>(Intersection.prototype.getIntersection)),
+            ...(fetchMiddlewares<RequestHandler>(Intersection.prototype.intersect)),
 
-            async function Intersection_getIntersection(request: ExRequest, response: ExResponse, next: any) {
+            async function Intersection_intersect(request: ExRequest, response: ExResponse, next: any) {
             const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    request: {"in":"body","name":"request","required":true,"ref":"IntersectionRequest"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -56,12 +66,12 @@ export function RegisterRoutes(app: Router) {
                 const controller = new Intersection();
 
               await templateService.apiHandler({
-                methodName: 'getIntersection',
+                methodName: 'intersect',
                 controller,
                 response,
                 next,
                 validatedArgs,
-                successStatus: undefined,
+                successStatus: 200,
               });
             } catch (err) {
                 return next(err);

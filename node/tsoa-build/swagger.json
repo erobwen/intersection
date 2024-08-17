@@ -38,6 +38,28 @@
 				],
 				"type": "object",
 				"additionalProperties": false
+			},
+			"IntersectionRequest": {
+				"properties": {
+					"listA": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"listB": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"listA",
+					"listB"
+				],
+				"type": "object",
+				"additionalProperties": false
 			}
 		},
 		"securitySchemes": {}
@@ -49,11 +71,11 @@
 	},
 	"paths": {
 		"/intersect": {
-			"get": {
-				"operationId": "GetIntersection",
+			"post": {
+				"operationId": "Intersect",
 				"responses": {
 					"200": {
-						"description": "Ok",
+						"description": "Calculated intersection",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -61,10 +83,23 @@
 								}
 							}
 						}
+					},
+					"500": {
+						"description": "Internal server error"
 					}
 				},
 				"security": [],
-				"parameters": []
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/IntersectionRequest"
+							}
+						}
+					}
+				}
 			}
 		}
 	},

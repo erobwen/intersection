@@ -1,0 +1,36 @@
+import express from 'express';
+import swaggerUi from 'swagger-ui-express';
+import { RegisterRoutes } from "../tsoa-build/routes.js";
+import openApi from '../tsoa-build/swagger.json' with { type: "json"};
+
+(async () => {
+  const app = express();
+
+  // Basics
+  app.use(express.json());
+  app.use(express.urlencoded({ extended: true }));
+
+  // Headers setup
+  app.use(function (req, res, next) {
+    const origin = req.get('origin');
+    if (origin === "http://localhost:5173") {
+      res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5173'); // Dev
+    }
+    res.setHeader(`Access-Control-Allow-Methods`, `GET,PUT,POST,DELETE`);
+    res.setHeader(`Access-Control-Allow-Headers`, `Content-Type`);
+    next()
+  })
+
+  // TSOA routes
+  RegisterRoutes(app);
+
+  // Swagger auto-generate
+  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(openApi));
+
+  // Start
+  app.listen(3000, () => {
+    console.log(`List intersection backend listening at http://localhost:3000/api`);
+    console.log(`API definitions at http://localhost:3000/api-docs`);
+  });
+
+})();

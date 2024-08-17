@@ -1,0 +1,13 @@
+{
+  "entryFile": "src/main.ts",
+  "noImplicitAdditionalProperties": "throw-on-extras",
+  "controllerPathGlobs": ["src/controllers**/*.ts"],
+  "spec": {
+    "outputDirectory": "tsoa-build",
+    "specVersion": 3
+  },
+  "routes": {
+    "esm": true,
+    "routesDir": "tsoa-build"
+  }
+}

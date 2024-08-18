@@ -2,27 +2,46 @@ import { FormEvent, useCallback, useState } from 'react';
 import './IntersectionGUI.css'
 import { intersect } from '../clients/Intersect';
 import { generateRandomList } from '../components/randomListGenerator';
-import { Alert, Button, Paper, TextField, Typography } from "@mui/material";
+import { Alert, Button, FormControl, FormControlLabel, FormLabel, Paper, Radio, RadioGroup, TextField, Typography } from "@mui/material";
 import { IntersectionResponse } from '../clients/models/IntersectionResponse';
+import { columnStyle, rowStyle } from '../components/styles';
+import { ListDisplay } from '../components/listDisplay';
 
-const columnStyle = {display: "flex", flexDirection: "column", gap: "10px", padding: "10px"}
-const rowStyle = {display: "flex", flexDirection: "row", gap: "10px", padding: "10px"}
+enum List {
+  A = "A",
+  B = "B"
+}
 
 function IntersectionGUI() {
+  /**
+   * State
+   */
+
   const [errorMessage, setErrorMessage] = useState<string|null>(null);
 
   const [listA, setListA] = useState<string[]>([]);
   const [listB, setListB] = useState<string[]>([]);
+  const [firstList, setFirstList] = useState<List>(List.A);
   const [intersectionResponse, setIntersectionResponse] = useState<IntersectionResponse|null>(null);
 
-  const [lengthListA, setLengthListA] = useState<number|null>(1000);
-  const [lengthListB, setLengthListB] = useState<number|null>(1000);
+  const [lengthListA, setLengthListA] = useState<number|null>(10);
+  const [lengthListB, setLengthListB] = useState<number|null>(15000);
+
+
+  /**
+   * Reset response
+   */
+  const resetResponse = () => {
+    setIntersectionResponse(null);
+    setErrorMessage(null);
+  }
+
+
+  /**
+   * Callbacks
+   */
 
   const onChangeListALength = useCallback((event: FormEvent) => {
-    console.log(event);
-    console.log(event?.target);
-    console.log((event?.target as HTMLButtonElement).value);
-    console.log(parseInt((event?.target as HTMLButtonElement).value));
     setLengthListA(parseInt((event?.target as HTMLButtonElement).value));
   }, [setLengthListA]);
 
@@ -33,26 +52,38 @@ function IntersectionGUI() {
   const onGenerateLists = useCallback(() => {
     setListA(generateRandomList(lengthListA as number));
     setListB(generateRandomList(lengthListB as number));
-    setIntersectionResponse(null);
+    resetResponse();
   }, [setListB, setListA, lengthListA, lengthListB]);
   
+  const onSelectFirstList = useCallback((event: FormEvent) => {
+    const value = (event?.target as HTMLInputElement).defaultValue
+    setFirstList(value as List);
+    resetResponse();
+  }, []);
+
   const onClickIntersect = useCallback(async () => {
     try {
-      const intersection = await intersect(listA, listB);
-      console.log(intersection);
+      let intersection; 
+      if (firstList === List.A) {
+        intersection = await intersect(listA, listB);
+      } else {
+        intersection = await intersect(listB, listA);
+      }
       setIntersectionResponse(intersection);
     } catch (error: any) {
       setIntersectionResponse(null);
       setErrorMessage(error.message);
     }
-  }, [setIntersectionResponse, listA, listB]);
+  }, [setIntersectionResponse, listA, listB, firstList]);
+
+
+  /**
+   * Render
+   */
 
   const hasTwoNumbers: boolean = typeof(lengthListA) === "number" && typeof(lengthListB) === "number"; 
   
   const hasTwoNonEmptyLists: boolean = listA.length > 0 && listB.length > 0
-
-  console.log("lengthListA:")
-  console.log(lengthListA);
 
   return (
     <>
@@ -60,7 +91,7 @@ function IntersectionGUI() {
       <p>
         This tool allows you to caclulate intersections of random lists.
       </p>
-      <Paper sx={columnStyle}>
+      <Paper sx={{...columnStyle, backgroundColor:"rgb(230, 230, 230)"}}>
         <Paper sx={rowStyle}>
           <TextField
             inputProps={{ type: 'number'}}
@@ -78,27 +109,40 @@ function IntersectionGUI() {
             Generate Lists
           </Button>
         </Paper>
-        <Paper>
-          <h3>List A</h3>
-          <div>{`[${listA.join(", ")}]`}</div>
-        </Paper>
-        <Paper>
-          <h3>List B</h3>
-          <div>{`[${listB.join(", ")}]`}</div>
-        </Paper>
-        <Button disabled={!hasTwoNonEmptyLists} 
-            onClick={onClickIntersect}>
-            Calculate Intersection!
-        </Button>
-        {errorMessage && 
-          <Alert severity='error'>{errorMessage}</Alert>}
-        {intersectionResponse && (
-          <Paper>
-            <h3>Intersection</h3>
-            <Typography>{`[${intersectionResponse.intersection.join(", ")}]`}</Typography>
-            <Typography>Time in MS: {intersectionResponse.calculationTimeMs}</Typography>
-          </Paper>
-        )}
+        <ListDisplay name="List A" list={listA}/>
+        <ListDisplay name="List B" list={listB}/>
+        { hasTwoNonEmptyLists && 
+          <>
+            <Paper>
+              <FormControl sx={{...rowStyle, alignItems: "center"}}>
+                <FormLabel id="demo-radio-buttons-group-label">List dedicated for hash table.</FormLabel>
+                <RadioGroup sx={rowStyle}
+                  aria-labelledby="demo-radio-buttons-group-label"
+                  value={firstList}
+                  onChange={onSelectFirstList}
+                  name="radio-buttons-group"
+                >
+                  <FormControlLabel value={List.A} control={<Radio />} label="List A" />
+                  <FormControlLabel value={List.B} control={<Radio />} label="List B" />
+                </RadioGroup>
+              </FormControl>
+            </Paper>
+            <Button variant="contained"
+                onClick={onClickIntersect}>
+                Calculate Intersection!
+            </Button>
+            {errorMessage && 
+              <Alert severity='error'>{errorMessage}</Alert>}
+            {intersectionResponse && (
+              <>
+                <ListDisplay name="Intersection" list={intersectionResponse.intersection}/>
+                <Paper>
+                  <Typography>Time in MS: {intersectionResponse.calculationTimeMs}</Typography>
+                </Paper>
+              </>
+            )}        
+          </>
+        }
       </Paper>
     </>
   )

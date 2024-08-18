@@ -25,6 +25,8 @@ a:hover {
 body {
   margin: 0;
   display: flex;
+  justify-content: flex-start;
+  flex-direction: column;
   place-items: center;
   background-color: #b6b6b6;
   min-width: 320px;

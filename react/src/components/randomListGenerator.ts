@@ -16,11 +16,9 @@ function generateRandomString(length: number): string {
 }
 
 export function generateRandomList(length: number, stringLength: number = defaultStringLength): string[] {
-  console.log(length)
   const result = [];
   while(result.length < length) {
     result.push(generateRandomString(stringLength));
   }
-  console.log(result);
   return result;
 }

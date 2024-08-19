@@ -14,7 +14,6 @@ const production = process?.env?.PRODUCTION === "true";
 
   // Headers setup
   app.use(function (_, res, next) {
-    console.log(production)
     if (production) {
       res.setHeader('Access-Control-Allow-Origin', 'http://localhost');
     } else {

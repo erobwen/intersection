@@ -2,11 +2,8 @@ import { Controller, Post, Route, Response, Body, SuccessResponse } from "tsoa";
 import { IntersectionResponse } from '../models/IntersectionResponse.js';
 import { intersect, optimizedIntersect } from '../components/intersect.js';
 import { IntersectionRequest } from "../models/IntersectionRequest.js";
+import { getTimestamp } from "../components/utility.js";
 
-function getTimestamp() {
-  let d = new Date();
-  return d.getTime();
-}
 
 /**
  * Intersection controller

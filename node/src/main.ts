@@ -3,6 +3,8 @@ import swaggerUi from 'swagger-ui-express';
 import { RegisterRoutes } from "../tsoa-build/routes.js";
 import openApi from '../tsoa-build/swagger.json' with { type: "json"};
 
+const production = process?.env?.PRODUCTION === "true";
+
 (async () => {
   const app = express();
 
@@ -11,11 +13,14 @@ import openApi from '../tsoa-build/swagger.json' with { type: "json"};
   app.use(express.urlencoded({ extended: true }));
 
   // Headers setup
-  app.use(function (req, res, next) {
-    const origin = req.get('origin');
-    if (origin === "http://localhost:5173") {
-      res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5173'); // Dev
+  app.use(function (_, res, next) {
+    console.log(production)
+    if (production) {
+      res.setHeader('Access-Control-Allow-Origin', 'http://localhost');
+    } else {
+      res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5173');
     }
+
     res.setHeader(`Access-Control-Allow-Methods`, `GET,PUT,POST,DELETE`);
     res.setHeader(`Access-Control-Allow-Headers`, `Content-Type`);
     next()

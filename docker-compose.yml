@@ -1,0 +1,31 @@
+services: 
+  backend:
+    build: 
+      context: node
+    container_name: backend
+    working_dir: /usr/src/app
+    networks: 
+      - node-network
+    volumes: 
+      - /usr/src/app/node_modules
+    tty: true
+    ports: 
+      - "3000:3000"
+
+  frontend:
+    build: 
+      context: react
+    container_name: frontend
+    working_dir: /usr/src/app
+    networks: 
+      - node-network
+    volumes: 
+      - /usr/src/app/node_modules    
+    tty: true
+    ports: 
+      - "80:80"
+
+networks: 
+  node-network:
+    driver: bridge
+    

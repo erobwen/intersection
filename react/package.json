@@ -13,13 +13,13 @@
   "dependencies": {
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
-    "axios": "^1.7.4",
     "@mui/icons-material": "^5.16.4",
     "@mui/material": "^5.16.1",
     "@mui/x-data-grid": "^7.10.0",
+    "axios": "^1.7.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "vitest": "^2.0.5"
+    "serve": "^14.2.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",
@@ -32,6 +32,7 @@
     "globals": "^15.9.0",
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.0.1",
-    "vite": "^5.4.1"
+    "vite": "^5.4.1",
+    "vitest": "^2.0.5"
   }
 }

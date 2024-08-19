@@ -4,8 +4,8 @@ import { intersect } from '../clients/Intersect';
 import { generateRandomList } from '../components/randomListGenerator';
 import { Alert, Box, Button, CircularProgress, FormControl, FormControlLabel, FormLabel, Paper, Radio, RadioGroup, TextField, Typography } from "@mui/material";
 import { IntersectionResponse } from '../clients/models/IntersectionResponse';
-import { background1, columnStyle, fillerStyle, leftAlignText, rowStyle } from '../components/styles';
-import { ListDisplay } from '../components/listDisplay';
+import { columnStyle, fillerStyle, leftAlignText, rowStyle } from '../components/styles';
+import { ListDisplay } from '../components/ListDisplay';
 
 enum List {
   A = "A",
@@ -69,9 +69,9 @@ function IntersectionGUI() {
       setLoading(true);
       let intersection; 
       if (firstList === List.A) {
-        intersection = await intersect(listA, listB);
+        intersection = await intersect(listA as string[], listB as string[]);
       } else {
-        intersection = await intersect(listB, listA);
+        intersection = await intersect(listB as string[], listA as string[]);
       }
       setIntersectionResponse(intersection);
     } catch (error: any) {

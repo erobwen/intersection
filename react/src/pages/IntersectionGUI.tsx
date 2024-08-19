@@ -2,9 +2,9 @@ import { FormEvent, useCallback, useState } from 'react';
 import './IntersectionGUI.css'
 import { intersect } from '../clients/Intersect';
 import { generateRandomList } from '../components/randomListGenerator';
-import { Alert, Button, FormControl, FormControlLabel, FormLabel, Paper, Radio, RadioGroup, TextField, Typography } from "@mui/material";
+import { Alert, Box, Button, CircularProgress, FormControl, FormControlLabel, FormLabel, Paper, Radio, RadioGroup, TextField, Typography } from "@mui/material";
 import { IntersectionResponse } from '../clients/models/IntersectionResponse';
-import { columnStyle, rowStyle } from '../components/styles';
+import { background1, columnStyle, fillerStyle, leftAlignText, rowStyle } from '../components/styles';
 import { ListDisplay } from '../components/listDisplay';
 
 enum List {
@@ -17,15 +17,18 @@ function IntersectionGUI() {
    * State
    */
 
-  const [errorMessage, setErrorMessage] = useState<string|null>(null);
-
-  const [listA, setListA] = useState<string[]>([]);
-  const [listB, setListB] = useState<string[]>([]);
-  const [firstList, setFirstList] = useState<List>(List.A);
-  const [intersectionResponse, setIntersectionResponse] = useState<IntersectionResponse|null>(null);
-
   const [lengthListA, setLengthListA] = useState<number|null>(10);
   const [lengthListB, setLengthListB] = useState<number|null>(15000);
+
+  const [listA, setListA] = useState<string[]|null>(null);
+  const [listB, setListB] = useState<string[]|null>(null);
+
+  const [firstList, setFirstList] = useState<List>(List.A);
+
+  const [isLoading, setLoading] = useState<boolean>(false);
+
+  const [errorMessage, setErrorMessage] = useState<string|null>(null);
+  const [intersectionResponse, setIntersectionResponse] = useState<IntersectionResponse|null>(null);
 
 
   /**
@@ -63,6 +66,7 @@ function IntersectionGUI() {
 
   const onClickIntersect = useCallback(async () => {
     try {
+      setLoading(true);
       let intersection; 
       if (firstList === List.A) {
         intersection = await intersect(listA, listB);
@@ -73,6 +77,8 @@ function IntersectionGUI() {
     } catch (error: any) {
       setIntersectionResponse(null);
       setErrorMessage(error.message);
+    } finally {
+      setLoading(false);
     }
   }, [setIntersectionResponse, listA, listB, firstList]);
 
@@ -83,7 +89,7 @@ function IntersectionGUI() {
 
   const hasTwoNumbers: boolean = typeof(lengthListA) === "number" && typeof(lengthListB) === "number"; 
   
-  const hasTwoNonEmptyLists: boolean = listA.length > 0 && listB.length > 0
+  const hasTwoLists: boolean = !!listA && !!listB;
 
   return (
     <>
@@ -91,8 +97,8 @@ function IntersectionGUI() {
       <p>
         This tool allows you to caclulate intersections of random lists.
       </p>
-      <Paper sx={{...columnStyle, backgroundColor:"rgb(230, 230, 230)"}}>
-        <Paper sx={rowStyle}>
+      <Paper sx={{...columnStyle, width: "1000px"}}>
+        <Box sx={{...rowStyle}}>
           <TextField
             inputProps={{ type: 'number'}}
             label="List A Length"
@@ -108,41 +114,58 @@ function IntersectionGUI() {
             onClick={onGenerateLists}>
             Generate Lists
           </Button>
-        </Paper>
-        <ListDisplay name="List A" list={listA}/>
-        <ListDisplay name="List B" list={listB}/>
-        { hasTwoNonEmptyLists && 
-          <>
-            <Paper>
-              <FormControl sx={{...rowStyle, alignItems: "center"}}>
-                <FormLabel id="demo-radio-buttons-group-label">List dedicated for hash table.</FormLabel>
-                <RadioGroup sx={rowStyle}
-                  aria-labelledby="demo-radio-buttons-group-label"
-                  value={firstList}
-                  onChange={onSelectFirstList}
-                  name="radio-buttons-group"
-                >
-                  <FormControlLabel value={List.A} control={<Radio />} label="List A" />
-                  <FormControlLabel value={List.B} control={<Radio />} label="List B" />
-                </RadioGroup>
-              </FormControl>
-            </Paper>
-            <Button variant="contained"
-                onClick={onClickIntersect}>
-                Calculate Intersection!
-            </Button>
-            {errorMessage && 
-              <Alert severity='error'>{errorMessage}</Alert>}
-            {intersectionResponse && (
-              <>
-                <ListDisplay name="Intersection" list={intersectionResponse.intersection}/>
-                <Paper>
-                  <Typography>Time in MS: {intersectionResponse.calculationTimeMs}</Typography>
-                </Paper>
-              </>
-            )}        
-          </>
+        </Box>
+        { listA && 
+          <ListDisplay name="List A" list={listA}/>
         }
+        { listB && 
+          <ListDisplay name="List B" list={listB}/>
+        }
+        {
+          hasTwoLists && (
+            <>
+              <Box>
+                <FormControl sx={{...rowStyle, alignItems: "center"}}>
+                  <FormLabel id="demo-radio-buttons-group-label">List dedicated for hash table.</FormLabel>
+                  <RadioGroup sx={rowStyle}
+                    aria-labelledby="demo-radio-buttons-group-label"
+                    value={firstList}
+                    onChange={onSelectFirstList}
+                    name="radio-buttons-group"
+                  >
+                    <FormControlLabel value={List.A} control={<Radio />} label="List A" />
+                    <FormControlLabel value={List.B} control={<Radio />} label="List B" />
+                  </RadioGroup>
+                </FormControl>
+              </Box>
+              <Box sx={rowStyle}>
+                <Box sx={fillerStyle}/>
+                <Button variant="contained"
+                  onClick={onClickIntersect}>
+                  Calculate Intersection
+                </Button>
+              </Box>
+            </>
+          )
+        }
+
+        <Box sx={{minHeight: "200px", ...columnStyle}}>
+          { isLoading && (
+            <CircularProgress/>
+          )}
+          { !isLoading && hasTwoLists && 
+            <>
+              {errorMessage && 
+                <Alert severity='error'>{errorMessage}</Alert>}
+              {intersectionResponse && (
+                <>
+                  <ListDisplay name="Intersection" list={intersectionResponse.intersection}/>
+                  <Typography sx={leftAlignText}>Calculation time: {intersectionResponse.calculationTimeMs}ms</Typography>
+                </>
+              )}        
+            </>
+          }
+        </Box>
       </Paper>
     </>
   )

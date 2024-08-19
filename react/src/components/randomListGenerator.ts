@@ -4,7 +4,7 @@ const characters = 'abcdefghijklmnopqrstuvwxyz';
 
 const defaultStringLength = 3;
 
-function generateRandomString(length: number): string {
+export function generateRandomString(length: number): string {
   let result = '';
   const charactersLength = characters.length;
   let counter = 0;

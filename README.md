@@ -7,7 +7,7 @@ List intersection full stack app
 
 Prerequisites: Make sure docker is running on the system and that node/npm is installed.
 
-* npm start
+* Run in root: npm start  (install runs inside dockerfiles)
 
 * front end at: http://localhost/ 
 * api at: http://localhost:3001/api
@@ -19,7 +19,8 @@ Note: docker containers will contained built versions of the services.
 
 Note: On windows where watch wont work inside a folder mounted into a docker environment, it is best to just run all services separatley each in a different terminal window to get proper watch. 
 
-* Start node and react each with npm install, npm start   
+* in node directory: npm install; npm start   
+* in react directory: npm install; npm start   
 
 * front end at: http://localhost:5173/
 * api end at: http://localhost:3000/api

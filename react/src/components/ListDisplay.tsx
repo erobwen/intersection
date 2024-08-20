@@ -1,6 +1,6 @@
 import { Modal, Paper, Button, Typography, Box } from "@mui/material";
 import { backgroundEmphasis, fillerStyle, rowStyle } from "./styles";
-import { useCallback, useState } from "react";
+import { ReactElement, useCallback, useState } from "react";
 
 export const ListDisplay = ({list, name}: {list: string[], name: string}) => {
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
@@ -35,9 +35,9 @@ export const ListDisplay = ({list, name}: {list: string[], name: string}) => {
 export const ModalContent = ({header, onClose, okEnabled=true, children}: 
   {
     header: string,
-    onClose: any,
+    onClose: () => void,
     okEnabled?: boolean, 
-    children: any
+    children: ReactElement[]|ReactElement
   }) => {
   return (
     <Paper sx={{

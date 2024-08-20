@@ -79,7 +79,14 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/IntersectionResponse"
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/IntersectionResponse"
+										},
+										{
+											"type": "string"
+										}
+									]
 								}
 							}
 						}

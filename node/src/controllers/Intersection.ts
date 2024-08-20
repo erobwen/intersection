@@ -15,7 +15,7 @@ export class Intersection extends Controller {
   @Response("500", "Internal server error")
   @SuccessResponse("200", "Calculated intersection")
   @Post()
-  public async intersect(@Body() request: IntersectionRequest): Promise<IntersectionResponse> {
+  public async intersect(@Body() request: IntersectionRequest): Promise<IntersectionResponse|string> {
     
     const { listA, listB } = request;
 
@@ -37,9 +37,9 @@ export class Intersection extends Controller {
         optimizedIntersection,
         optimizedCalculationTimeMs: optimizedTimeEnd - optimizedTimeStart
       };
-    } catch (error: any) {
+    } catch (error: unknown) {
       this.setStatus(500);
-      return error.message; 
+      return (error instanceof Error) ? (error as Error).message : ""; 
     }   
   }
 }

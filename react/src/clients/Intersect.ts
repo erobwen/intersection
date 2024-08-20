@@ -11,7 +11,7 @@ export async function intersect(listA: string[], listB: string[]): Promise<Inter
       {listA, listB}
     );
     return result.data; 
-  } catch(error:any) {
+  } catch(error: unknown) {
     throw new Error("Cannot connect to server, try again later.");
   }
 }

@@ -13,13 +13,13 @@ export function intersect(listA: string[], listB: string[]) {
   }
 
   listA.forEach(item => {
-    let count = getCount(item);
+    const count = getCount(item);
     listAHash.set(item, count + 1);
   });
 
   listB.forEach(item => { 
     if(listAHash.has(item)) {
-      let count = getCount(item);
+      const count = getCount(item);
       if (count === 1) {
         listAHash.delete(item);
       } else {

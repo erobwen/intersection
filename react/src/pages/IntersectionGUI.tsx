@@ -34,16 +34,16 @@ function IntersectionGUI() {
   /**
    * Reset
    */
-  const clearLists = () => {
+  const resetResponse = useCallback(() => {
+    setIntersectionResponse(null);
+    setErrorMessage(null);
+  }, [setIntersectionResponse, setErrorMessage]);
+
+  const clearLists = useCallback(() => {
     resetResponse();
     setListA(null);
     setListB(null);
-  }
-
-  const resetResponse = () => {
-    setIntersectionResponse(null);
-    setErrorMessage(null);
-  }
+  }, [setListA, setListB, resetResponse])
 
 
   /**
@@ -52,24 +52,24 @@ function IntersectionGUI() {
   const onChangeListALength = useCallback((event: FormEvent) => {
     clearLists();
     setLengthListA(parseInt((event?.target as HTMLButtonElement).value));
-  }, [setLengthListA]);
+  }, [setLengthListA, clearLists]);
 
   const onChangeListBLength = useCallback((event: FormEvent) => {
     clearLists();
     setLengthListB(parseInt((event?.target as HTMLButtonElement).value));
-  }, [setLengthListB]);
+  }, [setLengthListB, clearLists]);
 
   const onGenerateLists = useCallback(() => {
     setListA(generateRandomList(lengthListA as number));
     setListB(generateRandomList(lengthListB as number));
     resetResponse();
-  }, [setListB, setListA, lengthListA, lengthListB]);
+  }, [setListB, setListA, lengthListA, lengthListB, resetResponse]);
   
   const onSelectFirstList = useCallback((event: FormEvent) => {
     const value = (event?.target as HTMLInputElement).defaultValue
     setFirstList(value as ListName);
     resetResponse();
-  }, [setFirstList]);
+  }, [setFirstList, resetResponse]);
 
   const onClickIntersect = useCallback(async () => {
     resetResponse();
@@ -82,13 +82,13 @@ function IntersectionGUI() {
         intersection = await intersect(listB as string[], listA as string[]);
       }
       setIntersectionResponse(intersection);
-    } catch (error: any) {
+    } catch (error: unknown) {
       setIntersectionResponse(null);
-      setErrorMessage(error.message);
+      setErrorMessage((error instanceof Error) ? (error as Error).message : "Could not get data");
     } finally {
       setLoading(false);
     }
-  }, [setIntersectionResponse, listA, listB, firstList]);
+  }, [setIntersectionResponse, listA, listB, firstList, resetResponse]);
 
 
   /**

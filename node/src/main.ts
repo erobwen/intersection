@@ -4,6 +4,7 @@ import { RegisterRoutes } from "../tsoa-build/routes.js";
 import openApi from '../tsoa-build/swagger.json' with { type: "json"};
 
 const production = process?.env?.PRODUCTION === "true";
+const port = production ? 3001 : 3000;
 
 (async () => {
   const app = express();
@@ -32,9 +33,9 @@ const production = process?.env?.PRODUCTION === "true";
   app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(openApi));
 
   // Start
-  app.listen(3000, () => {
-    console.log(`List intersection backend listening at http://localhost:3000/api`);
-    console.log(`API definitions at http://localhost:3000/api-docs`);
+  app.listen(port, () => {
+    console.log(`List intersection backend listening at http://localhost:${port}/api`);
+    console.log(`API definitions at http://localhost:${port}/api-docs`);
   });
 
 })();

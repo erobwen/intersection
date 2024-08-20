@@ -128,7 +128,7 @@ function IntersectionGUI() {
             <>
               <Box>
                 <FormControl sx={{...rowStyle, alignItems: "center"}}>
-                  <FormLabel id="demo-radio-buttons-group-label">List dedicated for hash table.</FormLabel>
+                  <FormLabel id="demo-radio-buttons-group-label">First list in call (will be used to populate hash-map):</FormLabel>
                   <RadioGroup sx={rowStyle}
                     aria-labelledby="demo-radio-buttons-group-label"
                     value={firstList}

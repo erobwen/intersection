@@ -1,7 +1,8 @@
 import axios from "axios";
 import { IntersectionResponse } from "./models/IntersectionResponse";
+import { apiPort } from "../main";
 
-const baseUrl = "http://localhost:3000/api/";
+const baseUrl = `http://localhost:${apiPort}/api/`;
 
 export async function intersect(listA: string[], listB: string[]): Promise<IntersectionResponse> {
   try {

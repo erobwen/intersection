@@ -10,7 +10,7 @@ services:
       - /usr/src/app/node_modules
     tty: true
     ports: 
-      - "3000:3000"
+      - "3001:3001"
 
   frontend:
     build: 

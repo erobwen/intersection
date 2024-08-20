@@ -1,5 +1,4 @@
 import { FormEvent, useCallback, useState } from 'react';
-import './IntersectionGUI.css'
 import { intersect } from '../clients/Intersect';
 import { generateRandomList } from '../components/randomListGenerator';
 import { Alert, Box, Button, CircularProgress, FormControl, FormControlLabel, FormLabel, Paper, Radio, RadioGroup, TextField, Typography } from "@mui/material";
@@ -7,23 +6,23 @@ import { IntersectionResponse } from '../clients/models/IntersectionResponse';
 import { columnStyle, fillerStyle, leftAlignText, rowStyle } from '../components/styles';
 import { ListDisplay } from '../components/ListDisplay';
 
-enum List {
+enum ListName {
   A = "A",
   B = "B"
 }
 
 function IntersectionGUI() {
+
   /**
    * State
    */
-
   const [lengthListA, setLengthListA] = useState<number|null>(10);
   const [lengthListB, setLengthListB] = useState<number|null>(15000);
 
   const [listA, setListA] = useState<string[]|null>(null);
   const [listB, setListB] = useState<string[]|null>(null);
 
-  const [firstList, setFirstList] = useState<List>(List.A);
+  const [firstList, setFirstList] = useState<ListName>(ListName.A);
 
   const [isLoading, setLoading] = useState<boolean>(false);
 
@@ -43,7 +42,6 @@ function IntersectionGUI() {
   /**
    * Callbacks
    */
-
   const onChangeListALength = useCallback((event: FormEvent) => {
     setLengthListA(parseInt((event?.target as HTMLButtonElement).value));
   }, [setLengthListA]);
@@ -60,15 +58,16 @@ function IntersectionGUI() {
   
   const onSelectFirstList = useCallback((event: FormEvent) => {
     const value = (event?.target as HTMLInputElement).defaultValue
-    setFirstList(value as List);
+    setFirstList(value as ListName);
     resetResponse();
   }, []);
 
   const onClickIntersect = useCallback(async () => {
+    resetResponse();
     try {
       setLoading(true);
       let intersection; 
-      if (firstList === List.A) {
+      if (firstList === ListName.A) {
         intersection = await intersect(listA as string[], listB as string[]);
       } else {
         intersection = await intersect(listB as string[], listA as string[]);
@@ -86,7 +85,6 @@ function IntersectionGUI() {
   /**
    * Render
    */
-
   const hasTwoNumbers: boolean = typeof(lengthListA) === "number" && typeof(lengthListB) === "number"; 
   
   const hasTwoLists: boolean = !!listA && !!listB;
@@ -98,6 +96,8 @@ function IntersectionGUI() {
         This tool allows you to caclulate intersections of random lists.
       </p>
       <Paper sx={{...columnStyle, width: "1000px"}}>
+        
+        {/* List setup */}
         <Box sx={{...rowStyle}}>
           <TextField
             inputProps={{ type: 'number'}}
@@ -121,6 +121,8 @@ function IntersectionGUI() {
         { listB && 
           <ListDisplay name="List B" list={listB}/>
         }
+
+        {/* Send parameters */}
         {
           hasTwoLists && (
             <>
@@ -133,8 +135,8 @@ function IntersectionGUI() {
                     onChange={onSelectFirstList}
                     name="radio-buttons-group"
                   >
-                    <FormControlLabel value={List.A} control={<Radio />} label="List A" />
-                    <FormControlLabel value={List.B} control={<Radio />} label="List B" />
+                    <FormControlLabel value={ListName.A} control={<Radio />} label="List A" />
+                    <FormControlLabel value={ListName.B} control={<Radio />} label="List B" />
                   </RadioGroup>
                 </FormControl>
               </Box>
@@ -149,6 +151,7 @@ function IntersectionGUI() {
           )
         }
 
+        {/* Response */}
         <Box sx={{minHeight: "200px", ...columnStyle}}>
           { isLoading && (
             <CircularProgress/>

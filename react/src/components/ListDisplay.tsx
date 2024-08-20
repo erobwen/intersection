@@ -17,7 +17,7 @@ export const ListDisplay = ({list, name}: {list: string[], name: string}) => {
     <Paper sx={{...rowStyle, ...backgroundEmphasis, overflow: "hidden", textOverflow: "ellipsis"}}>
       <Typography sx={{whiteSpace: "nowrap", fontWeight: 700}}>{name}</Typography>
       <Box onClick={onOpenModal} sx={{...fillerStyle, cursor: "pointer", overflow: "hidden"}}>
-        <Typography sx={{width: "100%", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", textAlign: "left"}}>
+        <Typography id="list" sx={{width: "100%", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", textAlign: "left"}}>
           {`[${list.join(", ")}]`}
         </Typography>
       </Box>

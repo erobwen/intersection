@@ -32,8 +32,14 @@ function IntersectionGUI() {
 
 
   /**
-   * Reset response
+   * Reset
    */
+  const clearLists = () => {
+    resetResponse();
+    setListA(null);
+    setListB(null);
+  }
+
   const resetResponse = () => {
     setIntersectionResponse(null);
     setErrorMessage(null);
@@ -44,10 +50,12 @@ function IntersectionGUI() {
    * Callbacks
    */
   const onChangeListALength = useCallback((event: FormEvent) => {
+    clearLists();
     setLengthListA(parseInt((event?.target as HTMLButtonElement).value));
   }, [setLengthListA]);
 
   const onChangeListBLength = useCallback((event: FormEvent) => {
+    clearLists();
     setLengthListB(parseInt((event?.target as HTMLButtonElement).value));
   }, [setLengthListB]);
 

@@ -6,6 +6,6 @@ export const autoStyle = {flexBasis: "auto", flexGrow: 0, flexShrink: 0 };
 
 export const background1 = { backgroundColor: "rgb(230, 230, 230)" }
 export const background2 = { backgroundColor: "rgb(240, 240, 240)" }
-export const backgroundEmphasis = { backgroundColor: "rgb(204, 237, 222)"};
+export const backgroundEmphasis = { backgroundColor: "#ada4e3bb"};
 export const leftAlignText = { textAlign: "left" };
 

@@ -3,8 +3,9 @@ import { intersect } from '../clients/Intersect';
 import { generateRandomList } from '../components/randomListGenerator';
 import { Alert, Box, Button, CircularProgress, FormControl, FormControlLabel, FormLabel, Paper, Radio, RadioGroup, TextField, Typography } from "@mui/material";
 import { IntersectionResponse } from '../clients/models/IntersectionResponse';
-import { columnStyle, fillerStyle, leftAlignText, rowStyle } from '../components/styles';
+import { background1, columnStyle, fillerStyle, leftAlignText, rowStyle } from '../components/styles';
 import { ListDisplay } from '../components/ListDisplay';
+import nameLogotype from "../../public/nameLogotype.svg"; 
 
 enum ListName {
   A = "A",
@@ -60,7 +61,7 @@ function IntersectionGUI() {
     const value = (event?.target as HTMLInputElement).defaultValue
     setFirstList(value as ListName);
     resetResponse();
-  }, []);
+  }, [setFirstList]);
 
   const onClickIntersect = useCallback(async () => {
     resetResponse();
@@ -90,11 +91,11 @@ function IntersectionGUI() {
   const hasTwoLists: boolean = !!listA && !!listB;
 
   return (
-    <>
-      <h1>Intersection Tool</h1>
-      <p>
+    <Box sx={{...columnStyle, ...background1, padding: "40px", width: "100%", height: "100%", boxSizing: "border-box"}}>
+      <img style={{width: "500px"}} src={nameLogotype}/>
+      <Typography sx={leftAlignText}>
         This tool allows you to caclulate intersections of random lists.
-      </p>
+      </Typography>
       <Paper sx={{...columnStyle, width: "1000px"}}>
         
         {/* List setup */}
@@ -123,8 +124,7 @@ function IntersectionGUI() {
         }
 
         {/* Send parameters */}
-        {
-          hasTwoLists && (
+        { hasTwoLists && (
             <>
               <Box>
                 <FormControl sx={{...rowStyle, alignItems: "center"}}>
@@ -170,7 +170,7 @@ function IntersectionGUI() {
           }
         </Box>
       </Paper>
-    </>
+    </Box>
   )
 }
 

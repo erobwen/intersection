@@ -10,7 +10,7 @@ const port = production ? 3001 : 3000;
   const app = express();
 
   // Basics
-  app.use(express.json());
+  app.use(express.json({ limit: '4000000kb' }));
   app.use(express.urlencoded({ extended: true }));
 
   // Headers setup

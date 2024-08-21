@@ -23,7 +23,7 @@ describe("While testing IntersectionGUI", () => {
   it("should display name", async () => {
     render(<IntersectionGUI/>);
     
-    expect(await screen.findByText("Intersection Tool")).not.toBeNull();
+    expect(await screen.findByText("This tool allows you to caclulate intersections of random lists.")).not.toBeNull();
   });
 
   it("should show intersection given by server", async () => {

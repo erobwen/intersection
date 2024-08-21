@@ -15,6 +15,7 @@ Prerequisites: Make sure docker is running on the system and that node/npm is in
 
 Note: docker containers will contained built versions of the services. 
 
+
 # Develop
 
 Note: On windows where watch wont work inside a folder mounted into a docker environment, it is best to just run all services separatley each in a different terminal window to get proper watch. 
@@ -25,3 +26,8 @@ Note: On windows where watch wont work inside a folder mounted into a docker env
 * front end at: http://localhost:5173/
 * api end at: http://localhost:3000/api
 * api definition at: http://localhost:3000/api-docs
+
+
+# Screenshot
+
+![Alt text](/screenshot.png?raw=true "Screenshot")

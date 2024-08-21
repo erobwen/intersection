@@ -1,5 +1,6 @@
 import { expect, test, describe } from 'vitest'
 import { Intersection } from './Intersection';
+import { IntersectionResponse } from '../models/IntersectionResponse';
 
 describe("Test intersection controller", () => {
   test("Test post", async () => {
@@ -7,7 +8,7 @@ describe("Test intersection controller", () => {
     const returnValue = await controller.intersect({
       listA: ["a", "b", "c", "d"],
       listB: ["b", "c", "d", "e"]
-    })
+    }) as IntersectionResponse;
 
     expect(returnValue.intersection.length).toBe(3);
     expect(returnValue.intersection[0]).toBe("b");

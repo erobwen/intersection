@@ -1,6 +1,6 @@
 # About
 
-List intersection full stack app
+List intersection full stack app, built using React, Node.js and docker.
 
 
 # Run the application

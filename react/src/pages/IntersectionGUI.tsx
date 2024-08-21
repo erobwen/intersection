@@ -17,7 +17,7 @@ function IntersectionGUI() {
   /**
    * State
    */
-  const [lengthListA, setLengthListA] = useState<number|null>(10);
+  const [lengthListA, setLengthListA] = useState<number|null>(100);
   const [lengthListB, setLengthListB] = useState<number|null>(15000);
 
   const [listA, setListA] = useState<string[]|null>(null);

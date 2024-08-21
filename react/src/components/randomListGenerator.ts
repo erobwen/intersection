@@ -1,6 +1,6 @@
 
 // const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-const characters = 'abcdefghijklmnopqrstuvwxyz';
+const characters = '0123456789abcdef';
 
 const defaultStringLength = 3;
 

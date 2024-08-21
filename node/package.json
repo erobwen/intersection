@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "build-tsoa": "tsoa routes --basePath /api && tsoa spec --basePath /api",
+    "build-tsoa": "npx tsoa routes --basePath /api && npx tsoa spec --basePath /api",
     "build": "npm run build-tsoa && tsc -p .",
     "start": "npm run build-tsoa && tsx watch src/main.ts",
     "test": "vitest",

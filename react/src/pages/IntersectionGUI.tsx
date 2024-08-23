@@ -14,14 +14,13 @@ enum ListName {
 }
 
 
-function IntersectionGUI({givenWorker}: {givenWorker?: Worker}) {
+function IntersectionGUI({createListsWorker}: {createListsWorker?: Worker}) {
 
   /**
    * State
    */
   const [lengthListA, setLengthListA] = useState<number|null>(10);
-  const [lengthListB, setLengthListB] = useState<number|null>(10);
-  // const [lengthListB, setLengthListB] = useState<number|null>(1000000);
+  const [lengthListB, setLengthListB] = useState<number|null>(1000000);
   const [isGeneratingList, setGeneratingList] = useState<boolean>(false);
 
   const [listA, setListA] = useState<string[]|null>(null);
@@ -54,7 +53,8 @@ function IntersectionGUI({givenWorker}: {givenWorker?: Worker}) {
    */
   const [listCreator, setListCreator] = useState<null|Worker>(null);
   useEffect(() => {
-    const worker = givenWorker ? givenWorker : new ListCreatorWebWorker();
+
+    const worker = createListsWorker ? createListsWorker : new ListCreatorWebWorker();
     worker.onmessage = (response: MessageEvent<ListCreatorWorkerResponse>) => {
       const {listA, listB} = response.data;
       setListA(listA);
@@ -71,10 +71,11 @@ function IntersectionGUI({givenWorker}: {givenWorker?: Worker}) {
       resetResponse();
     }
     setListCreator(worker);
+
     return () => {
-      worker.terminate();
+      if (!createListsWorker) worker.terminate();
     }
-  }, [setListB, setListA, resetResponse, setListCreator]);
+  }, [setListB, setListA, resetResponse, setListCreator, createListsWorker]);
 
 
   /**
@@ -94,7 +95,6 @@ function IntersectionGUI({givenWorker}: {givenWorker?: Worker}) {
     setGeneratingList(true);
     setListA(null);
     setListB(null);
-    console.log("starting worker... ");
     if (listCreator) listCreator.postMessage({lengthListA, lengthListB});    
   }, [lengthListA, lengthListB, listCreator]);
   

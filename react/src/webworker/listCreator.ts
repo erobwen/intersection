@@ -1,14 +1,13 @@
 import { generateRandomList } from "../components/randomListGenerator";
 import { ListCreatorWorkerRequest } from "./ListCreatorWorkerRequest";
 
-self.onmessage = async function(request: MessageEvent<ListCreatorWorkerRequest>) {  
-  console.log("In webworker... ");
+self.onmessage = function(request: MessageEvent<ListCreatorWorkerRequest>) {
   const {lengthListA, lengthListB} = request.data;
   const lists = {
     listA: generateRandomList(lengthListA),
     listB: generateRandomList(lengthListB)
   }
-  postMessage(lists);
+  self.postMessage(lists);
 };
 
 

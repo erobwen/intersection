@@ -141,6 +141,10 @@ function IntersectionGUI({createListsWorker}: {createListsWorker?: Worker}) {
   
   const hasTwoLists: boolean = !!listA && !!listB;
 
+  const lenghtWarningA = lengthListA !== null ? lengthListA > 1000000 ? "Too large lists might make the app unresponsive" : null : null;
+  
+  const lenghtWarningB = lengthListB !== null ? lengthListB > 1000000 ? "Too large lists might make the app unresponsive" : null : null;
+
   return (
     <Box sx={{...columnStyle, ...background1, padding: "40px", width: "100%", height: "100%", boxSizing: "border-box"}}>
       <img style={{width: "500px"}} src={nameLogotype}/>
@@ -156,11 +160,13 @@ function IntersectionGUI({createListsWorker}: {createListsWorker?: Worker}) {
             label="List A Length"
             type="number"
             onChange={onChangeListALength}
+            helperText={lenghtWarningA}
             value={lengthListA ? lengthListA : ""}/>
           <TextField 
             label="List B Length"
             inputProps={{ type: 'number'}}
             onChange={onChangeListBLength}
+            helperText={lenghtWarningB}
             value={lengthListB ? lengthListB : ""}/>
           <Button disabled={!hasTwoNumbers || isGeneratingList} 
             onClick={onGenerateLists}>

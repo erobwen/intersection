@@ -1,24 +1,27 @@
-import { FormEvent, useCallback, useState } from 'react';
+import { FormEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { intersect } from '../clients/Intersect';
-import { generateRandomList } from '../components/randomListGenerator';
 import { Alert, Box, Button, CircularProgress, FormControl, FormControlLabel, FormLabel, Paper, Radio, RadioGroup, TextField, Typography } from "@mui/material";
 import { IntersectionResponse } from '../clients/models/IntersectionResponse';
 import { background1, columnStyle, fillerStyle, leftAlignText, rowStyle } from '../components/styles';
 import { ListDisplay } from '../components/ListDisplay';
 import nameLogotype from "../../public/nameLogotype.svg"; 
+import ListCreatorWebWorker from "../webworker/listCreator?worker";
+import { ListCreatorWorkerResponse } from '../webworker/ListCreatorWorkerResponse';
 
 enum ListName {
   A = "A",
   B = "B"
 }
 
-function IntersectionGUI() {
+
+function IntersectionGUI({createListsWorker}: {createListsWorker?: Worker}) {
 
   /**
    * State
    */
-  const [lengthListA, setLengthListA] = useState<number|null>(100);
+  const [lengthListA, setLengthListA] = useState<number|null>(10);
   const [lengthListB, setLengthListB] = useState<number|null>(1000000);
+  const [isGeneratingList, setGeneratingList] = useState<boolean>(false);
 
   const [listA, setListA] = useState<string[]|null>(null);
   const [listB, setListB] = useState<string[]|null>(null);
@@ -43,7 +46,36 @@ function IntersectionGUI() {
     resetResponse();
     setListA(null);
     setListB(null);
-  }, [setListA, setListB, resetResponse])
+  }, [setListA, setListB, resetResponse]);
+
+  /**
+   * Web worker for creating large lists
+   */
+  const [listCreator, setListCreator] = useState<null|Worker>(null);
+  useEffect(() => {
+
+    const worker = createListsWorker ? createListsWorker : new ListCreatorWebWorker();
+    worker.onmessage = (response: MessageEvent<ListCreatorWorkerResponse>) => {
+      const {listA, listB} = response.data;
+      setListA(listA);
+      setListB(listB);
+      setGeneratingList(false);
+      resetResponse();
+    }
+    worker.onerror = () => {
+      setGeneratingList(false);
+      resetResponse();
+    }
+    worker.onmessageerror = () => {
+      setGeneratingList(false);
+      resetResponse();
+    }
+    setListCreator(worker);
+
+    return () => {
+      if (!createListsWorker) worker.terminate();
+    }
+  }, [setListB, setListA, resetResponse, setListCreator, createListsWorker]);
 
 
   /**
@@ -59,11 +91,12 @@ function IntersectionGUI() {
     setLengthListB(parseInt((event?.target as HTMLButtonElement).value));
   }, [setLengthListB, clearLists]);
 
-  const onGenerateLists = useCallback(() => {
-    setListA(generateRandomList(lengthListA as number));
-    setListB(generateRandomList(lengthListB as number));
-    resetResponse();
-  }, [setListB, setListA, lengthListA, lengthListB, resetResponse]);
+  const onGenerateLists = useCallback(async () => {
+    setGeneratingList(true);
+    setListA(null);
+    setListB(null);
+    if (listCreator) listCreator.postMessage({lengthListA, lengthListB});    
+  }, [lengthListA, lengthListB, listCreator]);
   
   const onSelectFirstList = useCallback((event: FormEvent) => {
     const value = (event?.target as HTMLInputElement).defaultValue
@@ -92,11 +125,25 @@ function IntersectionGUI() {
 
 
   /**
+   * Estimate query size
+   */
+  const tooLargeMessage = useMemo(() => {
+    const size = new Blob([JSON.stringify({listA, listB})]).size
+    return (size > 40000000000) ? "Lists are too large, make them smaller!" : null;
+    
+  }, [listA, listB])
+
+
+  /**
    * Render
    */
   const hasTwoNumbers: boolean = typeof(lengthListA) === "number" && typeof(lengthListB) === "number"; 
   
   const hasTwoLists: boolean = !!listA && !!listB;
+
+  const lenghtWarningA = lengthListA !== null ? lengthListA > 1000000 ? "Too large lists might make the app unresponsive" : null : null;
+  
+  const lenghtWarningB = lengthListB !== null ? lengthListB > 1000000 ? "Too large lists might make the app unresponsive" : null : null;
 
   return (
     <Box sx={{...columnStyle, ...background1, padding: "40px", width: "100%", height: "100%", boxSizing: "border-box"}}>
@@ -113,26 +160,35 @@ function IntersectionGUI() {
             label="List A Length"
             type="number"
             onChange={onChangeListALength}
+            helperText={lenghtWarningA}
             value={lengthListA ? lengthListA : ""}/>
           <TextField 
             label="List B Length"
             inputProps={{ type: 'number'}}
             onChange={onChangeListBLength}
+            helperText={lenghtWarningB}
             value={lengthListB ? lengthListB : ""}/>
-          <Button disabled={!hasTwoNumbers} 
+          <Button disabled={!hasTwoNumbers || isGeneratingList} 
             onClick={onGenerateLists}>
             Generate Lists
           </Button>
         </Box>
+
+
+        {/* Display lists */}
+        { isGeneratingList && <CircularProgress/> }
         { listA && 
           <ListDisplay name="List A" list={listA}/>
         }
         { listB && 
           <ListDisplay name="List B" list={listB}/>
         }
+        { tooLargeMessage &&
+          <Alert severity='error'>{tooLargeMessage}</Alert>
+        }
 
         {/* Send parameters */}
-        { hasTwoLists && (
+        { hasTwoLists && !tooLargeMessage && (
             <>
               <Box>
                 <FormControl sx={{...rowStyle, alignItems: "center"}}>

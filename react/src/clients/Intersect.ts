@@ -1,6 +1,6 @@
 import axios from "axios";
 import { IntersectionResponse } from "./models/IntersectionResponse";
-import { apiPort } from "../App";
+import { apiPort } from "../context";
 
 const baseUrl = `http://localhost:${apiPort}/api/`;
 

@@ -48,6 +48,7 @@ function IntersectionGUI({createListsWorker}: {createListsWorker?: Worker}) {
     setListB(null);
   }, [setListA, setListB, resetResponse]);
 
+  
   /**
    * Web worker for creating large lists
    */

@@ -69,3 +69,48 @@ test("Test redo", () => {
 });
 
 
+test("Test metadata", () => {
+  const A = "A";
+  const B = "B";
+  const C = "C";
+  const list = new FancyList<string>();
+  list.add(A);
+  list.add(B);
+  list.add(C);
+  expect(list.size()).toBe(3);
+  expect(list.unbox()).toStrictEqual([A, B, C]);
+
+  list.setMetadata(1, "meta");
+  expect(list.getMetadata(1)).toBe("meta");
+});
+
+test("Test metadata 2", () => {
+  const list : FancyList<string> = new FancyList()
+  
+  list.add("element");
+
+  // metadata is not set
+  expect(list.getMetadata(0)).toBe(null);
+
+  list.setMetadata(0, "a");
+  expect( list.getMetadata(0)).toBe("a");
+
+  list.setMetadata(0, "b");
+    expect( list.getMetadata(0)).toBe("b");
+
+  // remove element
+  list.remove(0);
+
+  // undo remove element
+  list.undo();
+  expect( list.getMetadata(0)).toBe("b");
+
+  // undo setting metadata "b"
+  list.undo();
+  expect( list.getMetadata(0)).toBe("a");
+
+  // undo setting metadata "a"
+  list.undo();
+  expect(list.getMetadata(0)).toBe(null);
+});
+

@@ -1,13 +1,7 @@
 
-// class Operation<T> {
-//   undo(list: FancyList<T>) {
-//     throw new Error("Not implemented yet!");
-//   }
-// }
-
 interface Operation<T> {
-  undo: (list: FancyList<T>) => void
   do: (list: FancyList<T>) => void
+  undo: (list: FancyList<T>) => void
 }
 
 class Add<T> implements Operation<T> {
@@ -19,15 +13,15 @@ class Add<T> implements Operation<T> {
     this.box = null;
   }
 
-  undo(list: FancyList<T>) {
-    list.contents.pop();
-  }
-
   do(list: FancyList<T>) {
     if (!this.box) {
       this.box = new Box<T>(this.element)
     }
     list.contents.push(this.box);
+  }
+
+  undo(list: FancyList<T>) {
+    list.contents.pop();
   }
 }
 
@@ -40,14 +34,38 @@ class Remove<T> implements Operation<T> {
     this.box = box;
   }
 
-  undo(list: FancyList<T>) {
-    list.contents.splice(this.index, 0, this.box);
-  }
-
   do(list: FancyList<T>) {
     list.contents.splice(this.index, 1);
   }
+
+  undo(list: FancyList<T>) {
+    list.contents.splice(this.index, 0, this.box);
+  }
 }
+
+class SetMetadata<T> implements Operation<T> {
+  index: number;
+  data: string;
+  oldData: string|null; 
+  
+  constructor(index: number, data: string) {
+    this.index = index;
+    this.data = data;
+    this.oldData = null
+  }
+
+  do(list: FancyList<T>) {
+    const box = list.contents[this.index];
+    this.oldData = box.metadata;
+    box.metadata = this.data;
+  }
+
+  undo(list: FancyList<T>) {
+    const box = list.contents[this.index];
+    box.metadata = this.oldData;
+  }
+}
+
 
 export class Box<T> {
   metadata: string|null;
@@ -83,9 +101,19 @@ export class FancyList<T> {
   }
 
   remove(index: number) {
-    const operation = new Remove(index, this.contents[index]);
+    const operation = new Remove<T>(index, this.contents[index]);
     this.operations.push(operation);
     operation.do(this);
+  }
+
+  setMetadata(index: number, data: string) {
+    const operation = new SetMetadata<T>(index, data);
+    this.operations.push(operation);
+    operation.do(this);
+  }
+
+  getMetadata(index: number) {
+    return this.contents[index].metadata;
   }
 
   get(index: number): T {

@@ -1,19 +1,25 @@
 {
-  "name": "intersection-tool",
-  "version": "1.0.0",
+  "name": "node",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
   "scripts": {
-    "start": "docker-compose up --watch",
-    "clean": "docker-compose down -v --rmi all",
-    "test": "cd node && npx vitest --run && cd .. && cd react && npx vitest --run && cd ..",
-    "lint":"cd node && npx eslint . && cd .. && cd react && npx eslint . && cd ..",
-    "postinstall": "cd node && npm install && cd .. && cd react && npm install && cd .."
+    "build-tsoa": "npx tsoa routes --basePath /api && npx tsoa spec --basePath /api",
+    "build": "npm run build-tsoa && tsc -p .",
+    "start": "npm run build-tsoa && tsx watch src/main.ts",
+    "test": "vitest",
+    "lint": "eslint ."
   },
-  "author": "Robert Renbris",
-  "license": "ISC",
-  "description": "",
+  "devDependencies": {
+    "@types/node": "^20.14.11",
+    "nodemon": "^3.1.4",
+    "tsx": "^4.16.2",
+    "typescript": "^5.5.3"
+  },
   "dependencies": {
-    "@emotion/react": "^11.11.4",
-    "@emotion/styled": "^11.11.5",
-    "@mui/material": "^5.16.1"
+    "eslint": "^9.9.0",
+    "tspec": "^0.1.116",
+    "typescript-eslint": "^8.2.0",
+    "vitest": "^2.0.5"
   }
 }

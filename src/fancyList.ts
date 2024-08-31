@@ -2,6 +2,7 @@
 interface Operation<T> {
   do: (list: FancyList<T>) => void
   undo: (list: FancyList<T>) => void
+  redo: (list: FancyList<T>) => void
 }
 
 class Add<T> implements Operation<T> {
@@ -14,10 +15,12 @@ class Add<T> implements Operation<T> {
   }
 
   do(list: FancyList<T>) {
-    if (!this.box) {
-      this.box = new Box<T>(this.element)
-    }
-    list.contents.push(this.box);
+    this.box = new Box<T>(this.element)
+    this.redo(list);
+  }
+
+  redo(list: FancyList<T>) {
+    list.contents.push(this.box as Box<T>);
   }
 
   undo(list: FancyList<T>) {
@@ -35,6 +38,10 @@ class Remove<T> implements Operation<T> {
   }
 
   do(list: FancyList<T>) {
+    this.redo(list);
+  }
+
+  redo(list: FancyList<T>) {
     list.contents.splice(this.index, 1);
   }
 
@@ -55,6 +62,10 @@ class SetMetadata<T> implements Operation<T> {
   }
 
   do(list: FancyList<T>) {
+    this.redo(list);
+  }
+
+  redo(list: FancyList<T>) {
     const box = list.contents[this.index];
     this.oldData = box.metadata;
     box.metadata = this.data;
@@ -142,6 +153,6 @@ export class FancyList<T> {
   redo() {
     const operation: Operation<T> = (this.redoOperations.shift() as Operation<T>);
     this.operations.push(operation);
-    operation.do(this);
+    operation.redo(this);
   }
 }
